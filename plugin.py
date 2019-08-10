@@ -24,7 +24,7 @@
         <h3>Devices</h3>
         <ul style="list-style-type:square">
             <li>temperature - Inverter temperature (Celcius)</li>
-            <li>power - Output power (Watts)</li>
+            <li>power - Current and total output power (Watts)</li>
             <li>current - Output current (ampere)</li>
             <li>voltage - Output Voltage</li>
         </ul>

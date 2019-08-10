@@ -8,11 +8,11 @@ Follow the Domoticz guide on [Using Python Plugins](https://www.domoticz.com/wik
 
 Login to a shell, go to the domoticz plugin directory and clone this repository:
 ```bash
+cd domoticz/plugins
 git clone https://github.com/dylian94/domoticz-GoodWeSEMS.git
 ```
 
 Restart Domoticz server, you can try one of these commands (on Linux):
-
 ```bash
 sudo systemctl restart domoticz.service
 sudo service domoticz.sh restart
@@ -21,6 +21,15 @@ sudo service domoticz.sh restart
 Open the Domoticz interface and go to: **Setup** > **Hardware**. You can add new Hardware add the bottom, in the list of hardware types choose for: **GoodWe inverter (via SEMS portal)**.
 
 Follow the instructions shown in the form.
+
+Updating
+--------
+Login to a shell, go to the plugin directory inside the domoticz plugin directory and execute git pull:
+```bash
+cd domoticz/plugins
+cd domoticz-GoodWeSEMS
+git pull
+```
 
 Contributing
 ------------
