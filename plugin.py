@@ -207,15 +207,14 @@ class GoodWeSEMSPlugin:
                             Domoticz.Device(Name="Solar inverter output voltage (SN: " + inverter["sn"] + ")",
                                             Unit=(self.baseDeviceIndex + 3), Type=243, Subtype=8).Create()
                             Domoticz.Device(Name="Solar inverter output power (SN: " + inverter["sn"] + ")",
-                                            Unit=(self.baseDeviceIndex + 4), Type=243, Subtype=29).Create()
+                                            Unit=(self.baseDeviceIndex + 4), Type=243, Subtype=29,
+                                            Switchtype=4, Used=1).Create()
                             Domoticz.Log("Devices created for GoodWe inverter (SN: " + inverter["sn"] + ")")
 
                         Devices[self.baseDeviceIndex + 1].Update(nValue=0, sValue=str(inverter["tempperature"]))
                         Devices[self.baseDeviceIndex + 2].Update(nValue=0, sValue=str(inverter["output_current"]))
                         Devices[self.baseDeviceIndex + 3].Update(nValue=0, sValue=str(inverter["output_voltage"]))
-                        Devices[self.baseDeviceIndex + 4].Update(nValue=0,
-                                                                 sValue=str(inverter["output_power"]) + ";" + str(
-                                                                     inverter["etotal"]))
+                        Devices[self.baseDeviceIndex + 4].Update(nValue=0, sValue=str(inverter["output_power"]) + ";" + str(inverter["etotal"]))
                         self.baseDeviceIndex += 4
 
                 if self.powerStationIndex == (len(self.powerStationList) - 1):
@@ -224,8 +223,7 @@ class GoodWeSEMSPlugin:
                     self.httpConn = None
                     self.baseDeviceIndex = 0
                 else:
-                    Domoticz.Log(
-                        "Retrieving next station data (ID: " + self.powerStationList[self.powerStationIndex] + ")")
+                    Domoticz.Log("Retrieving next station data (ID: " + self.powerStationList[self.powerStationIndex] + ")")
                     self.baseDeviceIndex += 1
                     Connection.Send(self.stationDataRequest())
 
