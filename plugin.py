@@ -24,7 +24,7 @@
         <h3>Devices</h3>
         <ul style="list-style-type:square">
             <li>temperature - Inverter temperature (Celcius)</li>
-            <li>power - Ooutput power (Watts)</li>
+            <li>power - Output power (Watts)</li>
             <li>current - Output current (ampere)</li>
             <li>voltage - Output Voltage</li>
         </ul>
@@ -47,12 +47,12 @@
     <params>
         <param field="Address" label="SEMS Server" width="200" required="true">
             <options>
-                <option label="Europe" value="eu.goodwe-power.com"/>
-                <option label="Australia" value="au.goodwe-power.com"/>
-                <option label="Global" value="www.goodwe-power.com" default="true"/>
+                <option label="Europe" value="eu.semsportal.com"/>
+                <option label="Australia" value="au.semsportal.com"/>
+                <option label="Global" value="www.semsportal.com" default="true"/>
             </options>
         </param>
-        <param field="Port" label="SEMS API port" width="30px" required="true" default="82"/>
+        <param field="Port" label="SEMS API Port" width="30px" required="true" default="443"/>
         <param field="Username" label="E-Mail address" width="200" required="true"/>
         <param field="Password" label="Password" width="200" required="true" password="true"/>
         <param field="Mode1" label="Power Station ID (Optional)" width="200"/>
@@ -100,20 +100,25 @@ class GoodWeSEMSPlugin:
         }
 
     def apiConnection(self):
-        return Domoticz.Connection(Name="SEMS Portal API", Transport="TCP/IP", Protocol="HTTP", Address=Parameters["Address"], Port=Parameters["Port"])
+        if Parameters["Port"] == "443":
+            return Domoticz.Connection(Name="SEMS Portal API", Transport="TCP/IP", Protocol="HTTPS",
+                                       Address=Parameters["Address"], Port=Parameters["Port"])
+        else:
+            return Domoticz.Connection(Name="SEMS Portal API", Transport="TCP/IP", Protocol="HTTP",
+                                       Address=Parameters["Address"], Port=Parameters["Port"])
 
     def tokenRequest(self):
         return {
-                    'Verb': 'POST',
-                    'URL': '/api/v2/Common/CrossLogin',
-                    'Data': json.dumps({
-                        "account": Parameters["Username"],
-                        "pwd": Parameters["Password"],
-                        "is_local": True,
-                        "agreement_agreement": 1
-                    }),
-                    'Headers': self.apiRequestHeaders()
-                }
+            'Verb': 'POST',
+            'URL': '/api/v2/Common/CrossLogin',
+            'Data': json.dumps({
+                "account": Parameters["Username"],
+                "pwd": Parameters["Password"],
+                "is_local": True,
+                "agreement_agreement": 1
+            }),
+            'Headers': self.apiRequestHeaders()
+        }
 
     def stationListRequest(self):
         return {
@@ -154,7 +159,8 @@ class GoodWeSEMSPlugin:
             else:
                 Connection.Send(self.stationDataRequest())
         else:
-            Domoticz.Log("Failed to connect (" + str(Status) + ") to: " + Parameters["Address"] + ":" + Parameters["Port"] + " with error: " + Description)
+            Domoticz.Log("Failed to connect (" + str(Status) + ") to: " + Parameters["Address"] + ":" + Parameters[
+                "Port"] + " with error: " + Description)
 
     def onMessage(self, Connection, Data):
         responseText = Data["Data"].decode("utf-8", "ignore")
@@ -185,23 +191,31 @@ class GoodWeSEMSPlugin:
 
             elif "api/v2/PowerStation/GetMonitorDetailByPowerstationId" in apiUrl:
                 if apiData is None:
-                    Domoticz.Log("No station data received from GoodWe SEMS API (Station ID: " + self.powerStationList[self.powerStationIndex] + ")")
+                    Domoticz.Log("No station data received from GoodWe SEMS API (Station ID: " + self.powerStationList[
+                        self.powerStationIndex] + ")")
                     self.tokenAvailable = False
                 else:
-                    Domoticz.Log("Station data received from GoodWe SEMS API (Station ID: " + self.powerStationList[self.powerStationIndex] + ")")
+                    Domoticz.Log("Station data received from GoodWe SEMS API (Station ID: " + self.powerStationList[
+                        self.powerStationIndex] + ")")
 
                     for inverter in apiData["inverter"]:
                         if len(Devices) <= self.baseDeviceIndex:
-                            Domoticz.Device(Name="Solar inverter temperature (SN: " + inverter["sn"] + ")", Unit=(self.baseDeviceIndex + 1), Type=80, Subtype=5).Create()
-                            Domoticz.Device(Name="Solar inverter output current (SN: " + inverter["sn"] + ")", Unit=(self.baseDeviceIndex + 2), Type=243, Subtype=23).Create()
-                            Domoticz.Device(Name="Solar inverter output voltage (SN: " + inverter["sn"] + ")", Unit=(self.baseDeviceIndex + 3), Type=243, Subtype=8).Create()
-                            Domoticz.Device(Name="Solar inverter output power (SN: " + inverter["sn"] + ")", Unit=(self.baseDeviceIndex + 4), Type=243, Subtype=29).Create()
+                            Domoticz.Device(Name="Solar inverter temperature (SN: " + inverter["sn"] + ")",
+                                            Unit=(self.baseDeviceIndex + 1), Type=80, Subtype=5).Create()
+                            Domoticz.Device(Name="Solar inverter output current (SN: " + inverter["sn"] + ")",
+                                            Unit=(self.baseDeviceIndex + 2), Type=243, Subtype=23).Create()
+                            Domoticz.Device(Name="Solar inverter output voltage (SN: " + inverter["sn"] + ")",
+                                            Unit=(self.baseDeviceIndex + 3), Type=243, Subtype=8).Create()
+                            Domoticz.Device(Name="Solar inverter output power (SN: " + inverter["sn"] + ")",
+                                            Unit=(self.baseDeviceIndex + 4), Type=243, Subtype=29).Create()
                             Domoticz.Log("Devices created for GoodWe inverter (SN: " + inverter["sn"] + ")")
 
                         Devices[self.baseDeviceIndex + 1].Update(nValue=0, sValue=str(inverter["tempperature"]))
                         Devices[self.baseDeviceIndex + 2].Update(nValue=0, sValue=str(inverter["output_current"]))
                         Devices[self.baseDeviceIndex + 3].Update(nValue=0, sValue=str(inverter["output_voltage"]))
-                        Devices[self.baseDeviceIndex + 4].Update(nValue=0, sValue=str(inverter["output_power"]) + ";" + str(inverter["etotal"]))
+                        Devices[self.baseDeviceIndex + 4].Update(nValue=0,
+                                                                 sValue=str(inverter["output_power"]) + ";" + str(
+                                                                     inverter["etotal"]))
                         self.baseDeviceIndex += 4
 
                 if self.powerStationIndex == (len(self.powerStationList) - 1):
@@ -210,7 +224,8 @@ class GoodWeSEMSPlugin:
                     self.httpConn = None
                     self.baseDeviceIndex = 0
                 else:
-                    Domoticz.Log("Retrieving next station data (ID: " + self.powerStationList[self.powerStationIndex] + ")")
+                    Domoticz.Log(
+                        "Retrieving next station data (ID: " + self.powerStationList[self.powerStationIndex] + ")")
                     self.baseDeviceIndex += 1
                     Connection.Send(self.stationDataRequest())
 
