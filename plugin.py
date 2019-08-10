@@ -230,7 +230,7 @@ class GoodWeSEMSPlugin:
                         Devices[self.baseDeviceIndex + 1].Update(nValue=0, sValue=str(inverter["tempperature"]))
                         Devices[self.baseDeviceIndex + 2].Update(nValue=0, sValue=str(inverter["output_current"]))
                         Devices[self.baseDeviceIndex + 3].Update(nValue=0, sValue=str(inverter["output_voltage"]))
-                        Devices[self.baseDeviceIndex + 4].Update(nValue=0, sValue=str(inverter["output_power"]) + ";" + str(inverter["etotal"]))
+                        Devices[self.baseDeviceIndex + 4].Update(nValue=0, sValue=str(inverter["output_power"]) + ";" + str(inverter["etotal"] * 1000))
                         self.baseDeviceIndex += 4
 
                 if self.powerStationIndex == (len(self.powerStationList) - 1):

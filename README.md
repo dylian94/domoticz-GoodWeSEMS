@@ -46,4 +46,4 @@ Current features
     - current - Output current (ampere)
     - voltage - Output Voltage
 
-There is a lot more information available trough the GooWe API if you would like to have a specific feature added too this plugin please submit an issue as indicated in the paragraph above. 
+There is a lot more information available trough the GoodWe API if you would like to have a specific feature added too this plugin please submit an issue as indicated in the paragraph above. 
