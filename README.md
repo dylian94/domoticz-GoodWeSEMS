@@ -8,7 +8,7 @@ Follow the Domoticz guide on [Using Python Plugins](https://www.domoticz.com/wik
 
 Login to a shell, go to the domoticz plugin directory and clone this repository:
 ```bash
-git clone https://github.com/dylian94/domoticz-buienradar.git
+git clone https://github.com/dylian94/domoticz-GoodWeSEMS.git
 ```
 
 Restart Domoticz server, you can try one of these commands (on Linux):
