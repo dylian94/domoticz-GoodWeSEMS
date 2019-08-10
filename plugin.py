@@ -172,7 +172,7 @@ class GoodWeSEMSPlugin:
 
     def onConnect(self, Connection, Status, Description):
         if (Status == 0):
-            Domoticz.Log("Connected to SEMS portal API successfully.")
+            Domoticz.Debug("Connected to SEMS portal API successfully.")
             self.startDeviceUpdate(Connection)
         else:
             Domoticz.Log("Failed to connect (" + str(Status) + ") to: " + Parameters["Address"] + ":" + Parameters[
