@@ -214,7 +214,9 @@ class GoodWeSEMSPlugin:
                     Domoticz.Log("Station data received from GoodWe SEMS API (Station ID: " + self.powerStationList[
                         self.powerStationIndex] + ")")
 
-                    for inverter in apiData["inverter"]:
+                    for inverterBase in apiData["inverter"]:
+                        inverter = inverterBase["invert_full"];
+
                         if len(Devices) <= self.baseDeviceIndex:
                             Domoticz.Device(Name="Solar inverter temperature (SN: " + inverter["sn"] + ")",
                                             Unit=(self.baseDeviceIndex + 1), Type=80, Subtype=5).Create()
@@ -228,9 +230,9 @@ class GoodWeSEMSPlugin:
                             Domoticz.Log("Devices created for GoodWe inverter (SN: " + inverter["sn"] + ")")
 
                         Devices[self.baseDeviceIndex + 1].Update(nValue=0, sValue=str(inverter["tempperature"]))
-                        Devices[self.baseDeviceIndex + 2].Update(nValue=0, sValue=str(inverter["output_current"]))
-                        Devices[self.baseDeviceIndex + 3].Update(nValue=0, sValue=str(inverter["output_voltage"]))
-                        Devices[self.baseDeviceIndex + 4].Update(nValue=0, sValue=str(inverter["output_power"]) + ";" + str(inverter["etotal"] * 1000))
+                        Devices[self.baseDeviceIndex + 2].Update(nValue=0, sValue=str(inverterBase["output_current"]))
+                        Devices[self.baseDeviceIndex + 3].Update(nValue=0, sValue=str(inverterBase["output_voltage"]))
+                        Devices[self.baseDeviceIndex + 4].Update(nValue=0, sValue=str(inverter["outputpower"]) + ";" + str(inverter["etotal"] * 1000))
                         self.baseDeviceIndex += 4
 
                 if self.powerStationIndex == (len(self.powerStationList) - 1):
